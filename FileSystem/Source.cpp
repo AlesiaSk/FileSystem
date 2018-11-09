@@ -15,16 +15,7 @@ struct block {
 	//данные добавить
 };
 
-struct element {
-	element *next;
-	element *prev;
-	block block;
-};
 
-struct list {
-	element *begin;
-	element *end;
-};
 
 struct file {
 	string name;
@@ -37,6 +28,17 @@ struct catalog {
 	vector<file> files;
 	vector<catalog> catalogs;
 	//еще какая-то информация о файлах должна быть
+};
+
+struct element {
+	element *next;
+	element *prev;
+	catalog directory;
+};
+
+struct list {
+	element *begin;
+	element *end;
 };
 
 vector<int> indexTable;
@@ -65,6 +67,23 @@ void ADD_TO_DIR(file file, catalog dir) {
 	dir.files.push_back(file);
 }
 
+void add_catalog(element **begin, element *beg, element **end, catalog cur_catalog) {
+	element *temp = new element;
+	if (*begin == NULL) {
+
+		*begin = *end = temp;
+		(*temp).prev = beg;
+	}
+	else {
+
+		(*temp).prev = *end;
+		(**end).next = temp;
+		*end = temp;
+	}
+	(*temp).next = NULL;
+	(*temp).directory = cur_catalog;
+}
+
 catalog DEL(catalog dir, file file) {
 	for (int i = 0; i < dir.files.size(); i++) {
 		if (dir.files[i].name == file.name) {
@@ -76,9 +95,9 @@ catalog DEL(catalog dir, file file) {
 
 catalog MD(string name) {
 	//проверка на то, существует ли каталог с таким именем в текущем
-	catalog *new_catalog = new catalog;
-	(*new_catalog).name = name;
-	return *new_catalog;
+	catalog new_catalog;
+	(new_catalog).name = name;
+	return new_catalog;
 }
 
 void MOVE(file movable, catalog cur_catalog, catalog new_catalog) {
@@ -112,33 +131,35 @@ void main() {
 	string cases;
 	string filename;
 	string type;
-	vector<catalog> catalogs;
+	string req;
 	catalog root = MD("root");
+	vector<catalog> catalogs;
 	catalog curr_catalog = root;
+	catalog prev_catalog = root;
 	//cout << "Choose 1 - Create a file; 2 - Create directory; 3 - Show files from directory; 4 - Delete file; 5 - Move file to another directory; 6 - Delete directory" << endl;
 	while (true)
 	{
 		cout << curr_catalog.name << ">";
 		cin >> cases;
-		if (cases == "cf") {
-			string request;
-			cin >> request;
-			type = request.substr(request.length() - 3, 3);
-			filename = request.substr(0, request.length() - 4);
-			root.files.push_back(CREATE_FILE(filename, type));
+		req = cases.substr(0, cases.find(" "));
+		if (req == "cf") {
+			cin >> cases;
+			type = cases.substr(cases.length() - 3, 3);
+			filename = cases.substr(cases.find(" ") + 1, cases.length() - 4);
+			curr_catalog.files.push_back(CREATE_FILE(filename, type));
 		}
-		else if (cases == "md"){
+		else if (req == "md"){
 			cin >> filename;
 			curr_catalog.catalogs.push_back(MD(filename));
 		}
-		else if (cases == "dir") {
+		else if (req == "dir") {
 			DIR(curr_catalog);
-			for (int i = 0; i < catalogs.size(); i++) {
-				cout << catalogs[i].name << endl;
+			for (int i = 0; i < curr_catalog.catalogs.size(); i++) {
+				cout << curr_catalog.catalogs[i].name << endl;
 			}
 		}
-		else if (cases == "del") {
-			curr_catalog = DEL(root, root.files[0]);
+		else if (req == "del") {
+			curr_catalog = DEL(curr_catalog, curr_catalog.files[0]);
 		}
 	}
 	
