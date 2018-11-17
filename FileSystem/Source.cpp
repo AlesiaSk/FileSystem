@@ -1,9 +1,10 @@
-#include <iostream>
+п»ї#include <iostream>
 #include <fstream>
 #include<conio.h>
 #include<stdio.h>
 #include<string>
 #include<vector>
+#include <bitset>
 
 using namespace std;
 
@@ -12,7 +13,7 @@ int SIZE_OF_BLOCK = 256;
 struct block {
 	string name;
 	int index;
-	//данные добавить
+	//Г¤Е•Г­Г­Е±Дє Г¤Г®ГЎЕ•ГўДЌЕ€Гј
 };
 
 
@@ -20,14 +21,15 @@ struct block {
 struct file {
 	string name;
 	string type;
+	string data;
+	vector<bitset<8> > bin_data;
 	char * first;
 };
 
 struct catalog {
 	string name;
 	vector<file> files;
-	vector<catalog*> catalogs;
-	//еще какая-то информация о файлах должна быть
+	vector<catalog> catalogs;
 };
 
 struct element {
@@ -56,11 +58,10 @@ void CD() {
 }
 
 void DIR(catalog dir) {
-	// добавить проверку на то, существует ли такой каталог
 	for (int i = 0; i < dir.files.size(); i++) {
 		cout << dir.files[i].name << endl;
 	}
-	
+
 }
 
 void ADD_TO_DIR(file file, catalog dir) {
@@ -84,40 +85,41 @@ void add_catalog(element **begin, element *beg, element **end, catalog cur_catal
 	(*temp).directory = cur_catalog;
 }
 
-void DEL(catalog* dir, file file) {
-	int curr_size = (*dir).files.size();
-	for (int i = 0; i < (*dir).files.size(); i++) {
-		if ((*dir).files[i].name == file.name) {
-			(*dir).files.erase((*dir).files.begin() + i);
+catalog DEL(catalog dir, string filename) {
+	int curr_size = dir.files.size();
+	for (int i = 0; i < dir.files.size(); i++) {
+		if (dir.files[i].name == filename) {
+			dir.files.erase(dir.files.begin() + i);
 		}
 	}
-	if (curr_size == (*dir).files.size()) {
-		cout << "Сan't find this file";
+	if (curr_size == dir.files.size()) {
+		cout << "Can't find this file";
 	}
+	return dir;
 }
 
-void RMDIR(catalog* dir, string deletable) {
-	int curr_size = (*dir).catalogs.size();
-	for (int i = 0; i < (*dir).catalogs.size(); i++) {
-		catalog* deldir = (*dir).catalogs[i];
-		if ((*deldir).name == deletable) {
-			(*dir).catalogs.erase((*dir).catalogs.begin() + i);
+catalog RMDIR(catalog dir, string deletable) {
+	int curr_size = dir.catalogs.size();
+	for (int i = 0; i < dir.catalogs.size(); i++) {
+		if (dir.catalogs[i].name == deletable) {
+			dir.catalogs.erase(dir.catalogs.begin() + i);
 		}
 	}
-	if (curr_size == (*dir).catalogs.size()) {
-		cout << "Сan't find this file";
+	if (curr_size == dir.catalogs.size()) {
+		cout << "Can't find this file";
 	}
+	return dir;
 }
 
 catalog MD(string name) {
-	//проверка на то, существует ли каталог с таким именем в текущем
+	//ДЏД‘Г®ГўДєД‘Д™Е• Г­Е• Е€Г®, Е„ГіЕЇДєЕ„Е€ГўГіДєЕ€ Г«ДЌ Д™Е•Е€Е•Г«Г®Дѓ Е„ Е€Е•Д™ДЌД› ДЌД›ДєГ­ДєД› Гў Е€ДєД™ГіЕЇДєД›
 	catalog new_catalog;
 	(new_catalog).name = name;
 	return new_catalog;
 }
 
 void MOVE(file movable, catalog cur_catalog, catalog new_catalog) {
-	//возможно, нужен еще поиск этого каталога
+	//ГўГ®Г§Д›Г®Д‡Г­Г®, Г­ГіД‡ДєГ­ ДєЕЇДє ДЏГ®ДЌЕ„Д™ ГЅЕ€Г®ДѓГ® Д™Е•Е€Е•Г«Г®ДѓЕ•
 	new_catalog.files.push_back(movable);
 	for (int i = 0; i < cur_catalog.files.size(); i++) {
 		if (cur_catalog.files[i].name == movable.name) {
@@ -127,20 +129,57 @@ void MOVE(file movable, catalog cur_catalog, catalog new_catalog) {
 }
 
 file CREATE_FILE(string name, string type) {
-	//проверка на то, существует ли такое имя файла в текущей директории 
+	//ДЏД‘Г®ГўДєД‘Д™Е• Г­Е• Е€Г®, Е„ГіЕЇДєЕ„Е€ГўГіДєЕ€ Г«ДЌ Е€Е•Д™Г®Дє ДЌД›Л™ ГґЕ•Г©Г«Е• Гў Е€ДєД™ГіЕЇДєГ© Г¤ДЌД‘ДєД™Е€Г®Д‘ДЌДЌ 
 	file *my_file = new file;
 	(*my_file).name = name;
 	(*my_file).type = type;
-	(*my_file).first = (char*) malloc(SIZE_OF_BLOCK);
+	(*my_file).first = (char*)malloc(SIZE_OF_BLOCK);
 	return *my_file;
 }
 
-void WRITE() {
+catalog WRITE(catalog cur_catalog, string filename, string data) {
+	bool isHere = false;
+	string binData;
+	for (int i = 0; i < cur_catalog.files.size(); i++) {
+		if (cur_catalog.files[i].name == filename) {
+			if (cur_catalog.files[i].type == "txt") {
+				cur_catalog.files[i].data += data + " ";
+				isHere = true;
+			}
+			else if (cur_catalog.files[i].type == "bin") {
+				for (size_t i = 0; i < data.size(); ++i)
+				{
+					cout << bitset<8>(data.c_str()[i]) << endl;
+					cur_catalog.files[i].bin_data.push_back(bitset<8>(data.c_str()[i]));
 
+				}
+				isHere = true;
+				//cur_catalog.files[i].data += strToBinary(data) + " ";
+			}
+		}
+		if (!isHere) {
+			cout << "This file doesn't exist" << endl;
+		}
+	}
+	return cur_catalog;
 }
 
-void READ() {
-
+void READ(catalog cur_catalog, string filename) {
+	bool isHere = false;
+	for (int i = 0; i < cur_catalog.files.size(); i++) {
+		if (cur_catalog.files[i].name == filename) {
+			if (cur_catalog.files[i].type == "txt") {
+				cout << cur_catalog.files[i].data << " " << endl;
+				isHere = true;
+			}
+			else if (cur_catalog.files[i].type == "bin") {
+				
+			}
+		}
+		if (!isHere) {
+			cout << "This file doesn't exist" << endl;
+		}
+	}
 }
 
 void main() {
@@ -148,8 +187,7 @@ void main() {
 	string filename;
 	string type;
 	string req;
-	catalog create;
-	catalog* dir;
+	catalog dir;
 	catalog root = MD("root");
 	vector<catalog*> path;
 	catalog* curr_catalog = &root;
@@ -159,8 +197,7 @@ void main() {
 	{
 		for (int i = 0; i < path.size(); i++) {
 			if (i == 0) {
-				catalog* temp = path[i];
-				cout << (*temp).name;
+				cout << (*path[i]).name;
 			}
 			else {
 				cout << "\\" << (*path[i]).name;
@@ -178,31 +215,28 @@ void main() {
 		}
 		else if (req == "md") {
 			cin >> filename;
-			create = MD(filename);
-			dir = &create;
-			(*curr_catalog).catalogs.push_back(dir);
+			(*curr_catalog).catalogs.push_back(MD(filename));
 		}
 		else if (req == "dir") {
 			DIR(*curr_catalog);
 			for (int i = 0; i < (*curr_catalog).catalogs.size(); i++) {
-				catalog *temp = (*curr_catalog).catalogs[i];
-				cout << (*temp).name << endl;
+				cout << (*curr_catalog).catalogs[i].name << endl;
 			}
 		}
 		else if (req == "del") {
-			DEL(curr_catalog, (*curr_catalog).files[0]);
+			cin >> filename;
+			(*curr_catalog) = DEL(*curr_catalog, filename);
 		}
 		else if (req == "cd") {
 			cin >> filename;
 			for (int i = 0; i < (*curr_catalog).catalogs.size(); i++) {
-				catalog *temp = (*curr_catalog).catalogs[i];
-				if ((*temp).name == filename) {
+				if ((*curr_catalog).catalogs[i].name == filename) {
 					dir = (*curr_catalog).catalogs[i];
-					curr_catalog = dir;
+					curr_catalog = &dir;
 					path.push_back(curr_catalog);
 				}
 				else {
-					cout << "Directory is not found" << endl;
+					cout << "Directory not found" << endl;
 				}
 			}
 		}
@@ -214,11 +248,24 @@ void main() {
 		}
 		else if (req == "rmdir") {
 			cin >> filename;
-			RMDIR(curr_catalog, filename);
+			*curr_catalog = RMDIR(*curr_catalog, filename);
 		}
 		else if (req == "move") {
 			cin >> filename;
-			RMDIR(curr_catalog, filename);
+			*curr_catalog = RMDIR(*curr_catalog, filename);
+		}
+		else if (req == "read")
+		{
+			cin >> filename;
+			READ((*curr_catalog), filename);
+		}
+		else if (req == "write")
+		{
+			string data;
+			cin >> filename;
+			cout << "Input data to write..." << endl;
+			cin >> data;
+			(*curr_catalog) = WRITE((*curr_catalog), filename, data);
 		}
 		else if (req == "help") {
 			cout << "md     create directory" << endl;
