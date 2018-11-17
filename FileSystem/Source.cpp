@@ -85,34 +85,33 @@ void add_catalog(element **begin, element *beg, element **end, catalog cur_catal
 	(*temp).directory = cur_catalog;
 }
 
-catalog DEL(catalog dir, string filename) {
-	int curr_size = dir.files.size();
-	for (int i = 0; i < dir.files.size(); i++) {
-		if (dir.files[i].name == filename) {
-			dir.files.erase(dir.files.begin() + i);
+void DEL(catalog **dir, string filename) {
+	int curr_size = (**dir).files.size();
+	for (int i = 0; i < (**dir).files.size(); i++) {
+		if ((**dir).files[i].name == filename) {
+			(**dir).files.erase((**dir).files.begin() + i);
 		}
 	}
-	if (curr_size == dir.files.size()) {
+	if (curr_size == (**dir).files.size()) {
 		cout << "Can't find this file";
 	}
-	return dir;
 }
 
-catalog RMDIR(catalog dir, string deletable) {
-	int curr_size = dir.catalogs.size();
-	for (int i = 0; i < dir.catalogs.size(); i++) {
-		if (dir.catalogs[i].name == deletable) {
-			dir.catalogs.erase(dir.catalogs.begin() + i);
+void RMDIR(catalog **dir, string deletable) {
+	int curr_size = (**dir).catalogs.size();
+	for (int i = 0; i < (**dir).catalogs.size(); i++) {
+		catalog* temp = &(**dir).catalogs[i];
+		if ((*temp).name == deletable) {
+			(**dir).catalogs.erase((**dir).catalogs.begin() + i);
 		}
 	}
-	if (curr_size == dir.catalogs.size()) {
+	if (curr_size == (**dir).catalogs.size()) {
 		cout << "Can't find this file";
 	}
-	return dir;
+	
 }
 
 catalog MD(string name) {
-	//ďđîâĺđęŕ íŕ ňî, ńóůĺńňâóĺň ëč ęŕňŕëîă ń ňŕęčě čěĺíĺě â ňĺęóůĺě
 	catalog new_catalog;
 	(new_catalog).name = name;
 	return new_catalog;
@@ -216,23 +215,24 @@ void main() {
 		else if (req == "md") {
 			cin >> filename;
 			(*curr_catalog).catalogs.push_back(MD(filename));
+			cout << "wede" << endl;
 		}
 		else if (req == "dir") {
 			DIR(*curr_catalog);
 			for (int i = 0; i < (*curr_catalog).catalogs.size(); i++) {
-				cout << (*curr_catalog).catalogs[i].name << endl;
+				catalog *temp = &(*curr_catalog).catalogs[i];
+				cout << (*temp).name << endl;
 			}
 		}
 		else if (req == "del") {
 			cin >> filename;
-			(*curr_catalog) = DEL(*curr_catalog, filename);
+			DEL(&curr_catalog, filename);
 		}
 		else if (req == "cd") {
 			cin >> filename;
 			for (int i = 0; i < (*curr_catalog).catalogs.size(); i++) {
 				if ((*curr_catalog).catalogs[i].name == filename) {
-					dir = (*curr_catalog).catalogs[i];
-					curr_catalog = &dir;
+					curr_catalog = &(*curr_catalog).catalogs[i];
 					path.push_back(curr_catalog);
 				}
 				else {
@@ -248,11 +248,11 @@ void main() {
 		}
 		else if (req == "rmdir") {
 			cin >> filename;
-			*curr_catalog = RMDIR(*curr_catalog, filename);
+			RMDIR(&curr_catalog, filename);
 		}
 		else if (req == "move") {
 			cin >> filename;
-			*curr_catalog = RMDIR(*curr_catalog, filename);
+			RMDIR(&curr_catalog, filename);
 		}
 		else if (req == "read")
 		{
