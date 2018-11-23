@@ -10,6 +10,7 @@ using namespace std;
 
 int SIZE_OF_BLOCK = 256;
 vector<int> indexTable;
+vector<string> block(SIZE_OF_BLOCK);
 
 struct block {
 	string name;
@@ -24,6 +25,7 @@ struct file {
 	string type;
 	string data;
 	vector<bitset<8> > bin_data;
+	vector<int> index;
 	char * first;
 };
 
@@ -121,49 +123,57 @@ file CREATE_FILE(string name, string type) {
 	return *my_file;
 }
 
-catalog WRITE(catalog cur_catalog, string filename, string data) {
-	bool isHere = false;
-	string binData;
-	for (int i = 0; i < cur_catalog.files.size(); i++) {
-		if (cur_catalog.files[i].name == filename) {
-			if (cur_catalog.files[i].type == "txt") {
-				cur_catalog.files[i].data += data + " ";
-				isHere = true;
-			}
-			else if (cur_catalog.files[i].type == "bin") {
-				for (size_t i = 0; i < data.size(); ++i)
-				{
-					cout << bitset<8>(data.c_str()[i]) << endl;
-					cur_catalog.files[i].bin_data.push_back(bitset<8>(data.c_str()[i]));
+void WRITE(catalog **cur_catalog, string filename, string data) {
+	for (int i = 0; i < (**cur_catalog).files.size(); i++) {
+		if ((**cur_catalog).files[i].name == filename) {
+			if ((**cur_catalog).files[i].type == "txt") {
+				for (int k = 0; k < data.size(); k ++) {
+					if (k += 7 < data.size()) {
+						string r = data.substr(k-1, 8);
+						bool isWrite = false;
+						for (int j = 0; j < block.size(); j++) {
+							if (block[j].empty() && !isWrite) {
+								block[j] = r;
+								(**cur_catalog).files[i].index.push_back(j);
+								isWrite = true;
+								
+							}
+						}
+					}
+					else {
+						string r = data.substr(k, data.size() - 1);
+						for (int j = 0; j < block.size(); j++) {
+							if (block[j].empty()) {
+								block[j] = r;
+								(**cur_catalog).files[i].index.push_back(j);
+								return;
+							}
+						}
+					}
 
+					k += 6;
 				}
-				isHere = true;
-				//cur_catalog.files[i].data += strToBinary(data) + " ";
 			}
-		}
-		if (!isHere) {
-			cout << "This file doesn't exist" << endl;
+			else {
+
+			}
+			
 		}
 	}
-	return cur_catalog;
 }
 
 void READ(catalog cur_catalog, string filename) {
-	bool isHere = false;
 	for (int i = 0; i < cur_catalog.files.size(); i++) {
 		if (cur_catalog.files[i].name == filename) {
-			if (cur_catalog.files[i].type == "txt") {
-				cout << cur_catalog.files[i].data << " " << endl;
-				isHere = true;
+			for(int j = 0; j < cur_catalog.files[i].index.size(); j++){
+				cout << block[cur_catalog.files[i].index[j]];
+				if ((j + 1) == cur_catalog.files[i].index.size()) {
+					cout << endl;
+				}
 			}
-			else if (cur_catalog.files[i].type == "bin") {
-				
-			}
-		}
-		if (!isHere) {
-			cout << "This file doesn't exist" << endl;
 		}
 	}
+	
 }
 
 void COPY(catalog **cur_catalog, string name) {
@@ -333,7 +343,7 @@ void main() {
 			cin >> filename;
 			cout << "Input data to write..." << endl;
 			cin >> data;
-			(*curr_catalog) = WRITE((*curr_catalog), filename, data);
+			WRITE(&curr_catalog, filename, data);
 		}
 
 		else if (req == "copy")
