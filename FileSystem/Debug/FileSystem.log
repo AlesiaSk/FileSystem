@@ -1,12 +1,19 @@
 ﻿  Source.cpp
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(61): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(90): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(102): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(123): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(142): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(168): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(197): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(222): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(233): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(56): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(85): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(97): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(127): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(153): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(173): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(182): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(199): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(201): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(208): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(225): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(227): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(235): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(265): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(291): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(302): warning C4018: <: несоответствие типов со знаком и без знака
   FileSystem.vcxproj -> C:\Users\Алеся\Documents\Visual Studio 2015\Projects\FileSystem\Debug\FileSystem.exe
   FileSystem.vcxproj -> C:\Users\Алеся\Documents\Visual Studio 2015\Projects\FileSystem\Debug\FileSystem.pdb (Partial PDB)

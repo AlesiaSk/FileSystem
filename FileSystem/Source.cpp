@@ -9,6 +9,7 @@
 using namespace std;
 
 int SIZE_OF_BLOCK = 256;
+vector<int> indexTable;
 
 struct block {
 	string name;
@@ -42,12 +43,6 @@ struct list {
 	element *begin;
 	element *end;
 };
-
-vector<int> indexTable;
-
-void COPY() {
-
-}
 
 void RMDIR() {
 
@@ -117,18 +112,8 @@ catalog MD(string name) {
 	return new_catalog;
 }
 
-void MOVE(file movable, catalog cur_catalog, catalog new_catalog) {
-	//âîçěîćíî, íóćĺí ĺůĺ ďîčńę ýňîăî ęŕňŕëîăŕ
-	new_catalog.files.push_back(movable);
-	for (int i = 0; i < cur_catalog.files.size(); i++) {
-		if (cur_catalog.files[i].name == movable.name) {
-			cur_catalog.files.erase(cur_catalog.files.begin() + i);
-		}
-	}
-}
-
 file CREATE_FILE(string name, string type) {
-	//ďđîâĺđęŕ íŕ ňî, ńóůĺńňâóĺň ëč ňŕęîĺ čě˙ ôŕéëŕ â ňĺęóůĺé äčđĺęňîđčč 
+
 	file *my_file = new file;
 	(*my_file).name = name;
 	(*my_file).type = type;
@@ -181,6 +166,89 @@ void READ(catalog cur_catalog, string filename) {
 	}
 }
 
+void COPY(catalog **cur_catalog, string name) {
+	int number_of_files = (**cur_catalog).files.size();
+	int number_of_catalogs = (**cur_catalog).catalogs.size();
+
+	for (int i = 0; i < (**cur_catalog).files.size(); i++) {
+		if ((**cur_catalog).files[i].name == name) {
+			string new_name = name + "_COPY";
+			file new_file = CREATE_FILE(new_name, (**cur_catalog).files[i].type);
+			(**cur_catalog).files.push_back(new_file);
+		}
+
+	}
+
+	for (int i = 0; i < (**cur_catalog).catalogs.size(); i++) {
+		if ((**cur_catalog).catalogs[i].name == name) {
+			string new_name = name + "_COPY";
+			catalog new_catalog = MD(new_name);
+			(**cur_catalog).catalogs.push_back(new_catalog);
+		}
+
+	}
+
+	if (number_of_catalogs == (**cur_catalog).catalogs.size() && number_of_files == (**cur_catalog).files.size()) {
+		cout << "File with this name doesn't exist";
+	}
+}
+
+void MOVE(vector<catalog*> path, string cur_name, string new_name, catalog **cur_catalog) {
+
+	bool isMovable = false;
+	for (int i = 0; i < (**cur_catalog).files.size(); i++) {
+		if ((**cur_catalog).files[i].name == cur_name) {
+			for (int j = 0; j < path.size(); j++) {
+				if ((*path[j]).name == new_name) {
+					(*path[j]).files.push_back((**cur_catalog).files[i]);
+					DEL(cur_catalog, (**cur_catalog).files[i].name);
+					isMovable = true;
+				}
+				else {
+					for (int y = 0; y < (*path[j]).catalogs.size(); y++) {
+						if ((*path[j]).catalogs[y].name == new_name) {
+							(*path[j]).catalogs[y].files.push_back((**cur_catalog).files[i]);
+							DEL(cur_catalog, (**cur_catalog).files[i].name);
+							isMovable = true;
+						}
+					}
+				}
+			}
+			if (!isMovable) {
+				(**cur_catalog).files[i].name = new_name;
+			}
+		}
+	}
+
+
+
+	for (int i = 0; i < (**cur_catalog).catalogs.size(); i++) {
+		if ((**cur_catalog).catalogs[i].name == cur_name) {
+			for (int j = 0; j < path.size(); j++) {
+				if ((*path[j]).name == new_name) {
+					catalog temp = (**cur_catalog).catalogs[i];
+					(*path[j]).catalogs.push_back(temp);
+					RMDIR(cur_catalog, (**cur_catalog).catalogs[i].name);
+					isMovable = true;
+				}
+				else {
+					for (int y = 0; y < (*path[j]).catalogs.size(); y++) {
+						if ((*path[j]).catalogs[y].name == new_name) {
+							(*path[j]).catalogs[y].catalogs.push_back((**cur_catalog).catalogs[i]);
+							RMDIR(cur_catalog, (**cur_catalog).catalogs[i].name);
+							isMovable = true;
+						}
+					}
+				}
+			}
+			if (!isMovable) {
+				(**cur_catalog).catalogs[i].name = new_name;
+			}
+		}
+	}
+	
+}
+
 void main() {
 	string cases;
 	string filename;
@@ -207,15 +275,13 @@ void main() {
 		req = cases.substr(0, cases.find(" "));
 
 		if (req == "cf") {
-			cin >> cases;
-			type = cases.substr(cases.length() - 3, 3);
-			filename = cases.substr(cases.find(" ") + 1, cases.length() - 4);
+			cin >> filename;
+			cin >> type;
 			(*curr_catalog).files.push_back(CREATE_FILE(filename, type));
 		}
 		else if (req == "md") {
 			cin >> filename;
 			(*curr_catalog).catalogs.push_back(MD(filename));
-			cout << "wede" << endl;
 		}
 		else if (req == "dir") {
 			DIR(*curr_catalog);
@@ -251,8 +317,10 @@ void main() {
 			RMDIR(&curr_catalog, filename);
 		}
 		else if (req == "move") {
+			string new_catalog;
 			cin >> filename;
-			RMDIR(&curr_catalog, filename);
+			cin >> new_catalog;
+			MOVE(path, filename, new_catalog, &curr_catalog);
 		}
 		else if (req == "read")
 		{
@@ -267,6 +335,13 @@ void main() {
 			cin >> data;
 			(*curr_catalog) = WRITE((*curr_catalog), filename, data);
 		}
+
+		else if (req == "copy")
+		{
+			cin >> filename;
+			COPY(&curr_catalog, filename);
+		}
+
 		else if (req == "help") {
 			cout << "md     create directory" << endl;
 			cout << "cf     create file" << endl;
