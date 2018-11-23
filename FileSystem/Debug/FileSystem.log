@@ -6,18 +6,23 @@ c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\
 c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(130): warning C4018: <: несоответствие типов со знаком и без знака
 c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(134): warning C4018: <: несоответствие типов со знаком и без знака
 c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(145): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(166): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(159): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(164): warning C4018: <: несоответствие типов со знаком и без знака
 c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(168): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(172): warning C4018: <: несоответствие типов со знаком и без знака
 c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(183): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(192): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(209): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(211): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(201): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(203): warning C4018: <: несоответствие типов со знаком и без знака
 c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(218): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(235): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(237): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(245): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(275): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(298): warning C4018: <: несоответствие типов со знаком и без знака
-c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(309): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(227): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(244): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(246): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(253): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(270): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(272): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(280): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(310): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(333): warning C4018: <: несоответствие типов со знаком и без знака
+c:\users\алеся\documents\visual studio 2015\projects\filesystem\filesystem\source.cpp(344): warning C4018: <: несоответствие типов со знаком и без знака
   FileSystem.vcxproj -> C:\Users\Алеся\Documents\Visual Studio 2015\Projects\FileSystem\Debug\FileSystem.exe
   FileSystem.vcxproj -> C:\Users\Алеся\Documents\Visual Studio 2015\Projects\FileSystem\Debug\FileSystem.pdb (Partial PDB)

@@ -155,7 +155,42 @@ void WRITE(catalog **cur_catalog, string filename, string data) {
 				}
 			}
 			else {
+				vector<bitset<8>> bin_data;
+				for (int i = 0; i < data.size(); i++)
+				{
+					bin_data.push_back(data.c_str()[i]);
+				}
+				data = "";
+				for (int i = 0; i < bin_data.size(); i++) {
+					data += bin_data[i].to_string();
+				}
 
+				for (int k = 0; k < data.size(); k++) {
+					if (k += 7 < data.size()) {
+						string r = data.substr(k - 1, 8);
+						bool isWrite = false;
+						for (int j = 0; j < block.size(); j++) {
+							if (block[j].empty() && !isWrite) {
+								block[j] = r;
+								(**cur_catalog).files[i].index.push_back(j);
+								isWrite = true;
+
+							}
+						}
+					}
+					else {
+						string r = data.substr(k, data.size() - 1);
+						for (int j = 0; j < block.size(); j++) {
+							if (block[j].empty()) {
+								block[j] = r;
+								(**cur_catalog).files[i].index.push_back(j);
+								return;
+							}
+						}
+					}
+
+					k += 6;
+				}
 			}
 			
 		}
@@ -342,7 +377,7 @@ void main() {
 			string data;
 			cin >> filename;
 			cout << "Input data to write..." << endl;
-			cin >> data;
+			getline(cin >> ws, data);
 			WRITE(&curr_catalog, filename, data);
 		}
 
@@ -359,6 +394,10 @@ void main() {
 			cout << "back   come back to parent directory" << endl;
 			cout << "del    delete file" << endl;
 			cout << "rmdir  delete directory" << endl;
+			cout << "copy   copy file or directory" << endl;
+			cout << "move   move or rename file or directory" << endl;
+			cout << "write  write data to file" << endl;
+			cout << "read   read data from file" << endl;
 			cout << endl;
 		}
 	}
