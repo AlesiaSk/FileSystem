@@ -141,12 +141,14 @@ void WRITE(catalog **cur_catalog, string filename, string data) {
 						}
 					}
 					else {
-						string r = data.substr(k, data.size() - 1);
+						string r = data.substr(k, data.size());
+						bool isWrite = false;
 						for (int j = 0; j < block.size(); j++) {
-							if (block[j].empty()) {
+							if (block[j].empty() && !isWrite) {
 								block[j] = r;
 								(**cur_catalog).files[i].index.push_back(j);
-								return;
+								isWrite = true;
+
 							}
 						}
 					}
@@ -179,7 +181,7 @@ void WRITE(catalog **cur_catalog, string filename, string data) {
 						}
 					}
 					else {
-						string r = data.substr(k, data.size() - 1);
+						string r = data.substr(k, data.size());
 						for (int j = 0; j < block.size(); j++) {
 							if (block[j].empty()) {
 								block[j] = r;
