@@ -1,0 +1,38 @@
+﻿  Source.cpp
+Source.cpp(38): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(50): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(62): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(89): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(92): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(96): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(108): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(123): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(128): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(132): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(136): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(147): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(165): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(167): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(182): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(191): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(208): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(210): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(217): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(234): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(236): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(244): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(289): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(320): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(331): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(383): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(389): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(394): warning C4018: <: несоответствие типов со знаком и без знака
+Source.cpp(281): warning C4101: infile: неиспользованная локальная переменная
+Source.cpp(280): warning C4101: outfile: неиспользованная локальная переменная
+  Создание кода
+  1 of 803 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    14 functions had inline decision re-evaluated but remain unchanged
+  Создание кода завершено
+  FileSystem.vcxproj -> C:\Users\Алеся\Documents\Visual Studio 2015\Projects\FileSystem\Release\FileSystem.exe
+  FileSystem.vcxproj -> C:\Users\Алеся\Documents\Visual Studio 2015\Projects\FileSystem\Release\FileSystem.pdb (Full PDB)

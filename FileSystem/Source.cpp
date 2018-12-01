@@ -5,45 +5,25 @@
 #include<string>
 #include<vector>
 #include <bitset>
+#include <fstream>
+
+#pragma warning(disable:4996)
 
 using namespace std;
 
 int SIZE_OF_BLOCK = 256;
-vector<int> indexTable;
 vector<string> block(SIZE_OF_BLOCK);
-
-struct block {
-	string name;
-	int index;
-	//äŕííűĺ äîáŕâčňü
-};
-
-
 
 struct file {
 	string name;
 	string type;
-	string data;
-	vector<bitset<8> > bin_data;
 	vector<int> index;
-	char * first;
 };
 
 struct catalog {
 	string name;
 	vector<file> files;
 	vector<catalog> catalogs;
-};
-
-struct element {
-	element *next;
-	element *prev;
-	catalog directory;
-};
-
-struct list {
-	element *begin;
-	element *end;
 };
 
 void RMDIR() {
@@ -63,23 +43,6 @@ void DIR(catalog dir) {
 
 void ADD_TO_DIR(file file, catalog dir) {
 	dir.files.push_back(file);
-}
-
-void add_catalog(element **begin, element *beg, element **end, catalog cur_catalog) {
-	element *temp = new element;
-	if (*begin == NULL) {
-
-		*begin = *end = temp;
-		(*temp).prev = beg;
-	}
-	else {
-
-		(*temp).prev = *end;
-		(**end).next = temp;
-		*end = temp;
-	}
-	(*temp).next = NULL;
-	(*temp).directory = cur_catalog;
 }
 
 void DEL(catalog **dir, string filename) {
@@ -119,7 +82,6 @@ file CREATE_FILE(string name, string type) {
 	file *my_file = new file;
 	(*my_file).name = name;
 	(*my_file).type = type;
-	(*my_file).first = (char*)malloc(SIZE_OF_BLOCK);
 	return *my_file;
 }
 
@@ -296,7 +258,17 @@ void MOVE(vector<catalog*> path, string cur_name, string new_name, catalog **cur
 	
 }
 
-void main() {
+void download(string file_name, catalog data) {
+	ifstream in(file_name.c_str());
+	in.read(reinterpret_cast<char*>(&data), sizeof(data));
+}
+
+void save(string file_name, catalog data) {
+	ofstream out(file_name.c_str());
+	out.write(reinterpret_cast<char*>(&data), sizeof(data));
+}
+
+void main() { //int main(int argc, char[] *argv) {
 	string cases;
 	string filename;
 	string type;
@@ -305,7 +277,12 @@ void main() {
 	catalog root = MD("root");
 	vector<catalog*> path;
 	catalog* curr_catalog = &root;
+	FILE *outfile;
+	FILE *infile;
+	file f;
+	catalog p;
 
+	//outfile=fopen(argv[1]);
 	path.push_back(&root);
 	while (true)
 	{
@@ -324,12 +301,20 @@ void main() {
 		if (req == "cf") {
 			cin >> filename;
 			cin >> type;
+			type = type.substr(1, type.size());
 			(*curr_catalog).files.push_back(CREATE_FILE(filename, type));
+
 		}
 		else if (req == "md") {
 			cin >> filename;
 			(*curr_catalog).catalogs.push_back(MD(filename));
 		}
+
+		else if (req == "md--") {
+			(*curr_catalog).catalogs.push_back(MD(p.name));
+			(*curr_catalog).files.push_back(CREATE_FILE(f.name, f.type));
+		} 
+
 		else if (req == "dir") {
 			DIR(*curr_catalog);
 			for (int i = 0; i < (*curr_catalog).catalogs.size(); i++) {
@@ -387,6 +372,71 @@ void main() {
 		{
 			cin >> filename;
 			COPY(&curr_catalog, filename);
+		}
+
+		else if (req == "save")
+		{
+			int size;
+			ofstream ofs("dump.bin", ios::binary);
+			size = block.size();
+			ofs.write((char *)&size, sizeof(block.size()));
+			for (int i = 0; i < block.size(); i++) {
+				ofs.write((char *)&block[i], sizeof(block[i]));
+			}
+			size = root.catalogs.size();
+			ofs.write((char *)&root.name, sizeof(root.name));
+			ofs.write((char *)&size, sizeof(root.catalogs.size()));
+			for (int i = 0; i < root.catalogs.size(); i++) {
+				ofs.write((char *)&root.catalogs[i].name, sizeof(root.catalogs[i].name));
+			}
+			size = root.files.size();
+			ofs.write((char *)&size, sizeof(root.files.size()));
+			for (int i = 0; i < root.files.size(); i++) {
+				ofs.write((char *)&root.files[i].name, sizeof(root.files[i].name));
+				ofs.write((char *)&root.files[i].type, sizeof(root.files[i].type));
+				size = root.files[i].index.size();
+				ofs.write((char *)&size, sizeof(size));
+				for (int j = 0; j < size; j++) {
+					ofs.write((char *)&root.files[i].index[j], sizeof(root.files[i].index[j]));
+				}
+				
+			}
+
+			
+		}
+
+		else if (req == "dump") {
+			int size;
+			file temp;
+			string name;
+
+			ifstream ifs("dump.bin", ios::binary);
+			ifs.read((char *)&size, sizeof(size));
+			for (int i = 0; i < size; i++) {
+				ifs.read((char *)&block[i], sizeof(block[i]));
+			}
+			ifs.read((char *)&root.name, sizeof(root.name));
+			ifs.read((char *)&size, sizeof(size));
+
+			for (int i = 0; i < size; i++) {
+				ifs.read((char *)&name, sizeof(name));
+				root.catalogs.push_back(MD(name));
+			}
+			ifs.read((char *)&size, sizeof(size)); 
+			for (int i = 0; i < size; i++) {
+				ifs.read((char *)&name, sizeof(name));
+				temp.name = name;
+				ifs.read((char *)&temp.type, sizeof(temp.type));
+				int temp_size;
+				ifs.read((char *)&temp_size, sizeof(temp_size));
+				int ind;
+				for (int j = 0; j < temp_size; j++) {
+					ifs.read((char *)&ind, sizeof(ind));
+					temp.index.push_back(ind);
+				}
+				root.files.push_back(temp);
+			}
+
 		}
 
 		else if (req == "help") {
