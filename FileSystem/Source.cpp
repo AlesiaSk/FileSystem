@@ -17,7 +17,6 @@ vector<string> block(SIZE_OF_BLOCK);
 struct file {
 	string name;
 	string type;
-	vector<int> index;
 };
 
 struct ind {
@@ -308,8 +307,8 @@ void main() {
 	string req;
 	catalog dir;
 	catalog root = MD("root");
-	vector<ind> index_vector;
 	vector<catalog*> path;
+	vector<ind> index_vector;
 	catalog* curr_catalog = &root;
 	FILE *outfile;
 	FILE *infile;
@@ -417,6 +416,16 @@ void main() {
 			for (int i = 0; i < block.size(); i++) {
 				ofs.write((char *)&block[i], sizeof(block[i]));
 			}
+			size = index_vector.size();
+			ofs.write((char *)&size, sizeof(index_vector.size()));
+			for (int i = 0; i < index_vector.size(); i++) {
+				ofs.write((char *)&index_vector[i].file_name, sizeof(index_vector[i].file_name));
+				int temp_size = index_vector[i].index.size();
+				ofs.write((char *)&temp_size, sizeof(index_vector[i].index.size()));
+				for (int j = 0; j < temp_size; j++) {
+					ofs.write((char *)&index_vector[i].index[j], sizeof(index_vector[i].index[j]));
+				}
+			}
 			size = root.catalogs.size();
 			ofs.write((char *)&root.name, sizeof(root.name));
 			ofs.write((char *)&size, sizeof(root.catalogs.size()));
@@ -428,11 +437,6 @@ void main() {
 			for (int i = 0; i < root.files.size(); i++) {
 				ofs.write((char *)&root.files[i].name, sizeof(root.files[i].name));
 				ofs.write((char *)&root.files[i].type, sizeof(root.files[i].type));
-				size = root.files[i].index.size();
-				ofs.write((char *)&size, sizeof(size));
-				for (int j = 0; j < size; j++) {
-					ofs.write((char *)&root.files[i].index[j], sizeof(root.files[i].index[j]));
-				}
 
 			}
 			
@@ -442,6 +446,7 @@ void main() {
 
 		else if (req == "load") {
 			int size;
+			int temp_size = 0;
 			file temp;
 			string name;
 			cin >> name;
@@ -451,6 +456,20 @@ void main() {
 			for (int i = 0; i < size; i++) {
 				ifs.read((char *)&block[i], sizeof(block[i]));
 			}
+			ifs.read((char *)&size, sizeof(size));
+			for (int i = 0; i < size; i++) {
+				ind temp;
+
+				ifs.read((char *)&temp.file_name, sizeof(temp.file_name));
+				ifs.read((char *)&temp_size, sizeof(temp_size));
+				int val;
+				for (int j = 0; j < temp_size; j++) {
+					ifs.read((char *)&val, sizeof(val));
+					temp.index.push_back(val);
+				}
+				index_vector.push_back(temp);
+			}
+			
 			ifs.read((char *)&root.name, sizeof(root.name));
 			ifs.read((char *)&size, sizeof(size));
 
@@ -468,7 +487,7 @@ void main() {
 				int ind;
 				for (int j = 0; j < temp_size; j++) {
 					ifs.read((char *)&ind, sizeof(ind));
-					temp.index.push_back(ind);
+					//temp.index.push_back(ind);
 				}
 				root.files.push_back(temp);
 			}
