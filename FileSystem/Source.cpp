@@ -44,10 +44,23 @@ void ADD_TO_DIR(file file, catalog dir) {
 	dir.files.push_back(file);
 }
 
-void DEL(catalog **dir, string filename) {
+void DEL(catalog **dir, string filename, vector<ind> *vec) {
 	int curr_size = (**dir).files.size();
 	for (int i = 0; i < (**dir).files.size(); i++) {
 		if ((**dir).files[i].name == filename) {
+			for (int l = 0; l < (*vec).size(); l++) {
+				if ((*vec)[l].file_name == filename) {
+					for (int j = 0; j < (*vec)[l].index.size(); j++) {
+						block[(*vec)[l].index[j]].clear();
+					}
+					(*vec).erase((*vec).begin() + l);
+				}
+			}
+			/*for (int l = 0; l < (*vec).size(); l++) {
+				if ((*vec)[l].file_name == filename) {
+					(*vec).erase((*vec).begin() + l);
+				}
+			}*/
 			(**dir).files.erase((**dir).files.begin() + i);
 		}
 	}
@@ -194,7 +207,7 @@ void READ(catalog cur_catalog, string filename, vector<ind> vec) {
 	}
 }
 
-void COPY(catalog **cur_catalog, string name) {
+void COPY(catalog **cur_catalog, string name, vector<ind> *vec) {
 	int number_of_files = (**cur_catalog).files.size();
 	int number_of_catalogs = (**cur_catalog).catalogs.size();
 
@@ -203,6 +216,14 @@ void COPY(catalog **cur_catalog, string name) {
 			string new_name = name + "_COPY";
 			file new_file = CREATE_FILE(new_name, (**cur_catalog).files[i].type);
 			(**cur_catalog).files.push_back(new_file);
+			ind temp;
+			temp.file_name = new_name;
+			for (int j = 0; j < (*vec).size(); j++) {
+				if ((*vec)[j].file_name == name) {
+					temp.index = (*vec)[j].index;
+				}
+			}
+			(*vec).push_back(temp);
 		}
 
 	}
@@ -229,14 +250,16 @@ void MOVE(vector<catalog*> path, string cur_name, string new_name, catalog **cur
 			for (int j = 0; j < path.size(); j++) {
 				if ((*path[j]).name == new_name) {
 					(*path[j]).files.push_back((**cur_catalog).files[i]);
-					DEL(cur_catalog, (**cur_catalog).files[i].name);
+				//	DEL(cur_catalog, (**cur_catalog).files[i].name);
+					(**cur_catalog).files.erase((**cur_catalog).files.begin() + i);
 					isMovable = true;
 				}
 				else {
 					for (int y = 0; y < (*path[j]).catalogs.size(); y++) {
 						if ((*path[j]).catalogs[y].name == new_name) {
 							(*path[j]).catalogs[y].files.push_back((**cur_catalog).files[i]);
-							DEL(cur_catalog, (**cur_catalog).files[i].name);
+						//	DEL(cur_catalog, (**cur_catalog).files[i].name);
+							(**cur_catalog).files.erase((**cur_catalog).files.begin() + i);
 							isMovable = true;
 						}
 					}
@@ -332,7 +355,7 @@ void main() {
 		}
 		else if (req == "del") {
 			cin >> filename;
-			DEL(&curr_catalog, filename);
+			DEL(&curr_catalog, filename, &index_vector);
 		}
 		else if (req == "cd") {
 			cin >> filename;
@@ -379,7 +402,7 @@ void main() {
 		else if (req == "copy")
 		{
 			cin >> filename;
-			COPY(&curr_catalog, filename);
+			COPY(&curr_catalog, filename, &index_vector);
 		}
 
 		else if (req == "save")
