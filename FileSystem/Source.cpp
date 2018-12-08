@@ -236,8 +236,8 @@ void COPY(catalog **cur_catalog, string name, vector<ind> *vec) {
 	}
 }
 
-void MOVE(vector<catalog*> path, string cur_name, string new_name, catalog **cur_catalog) {
-
+void MOVE(vector<catalog*> path, string cur_name, string new_name, catalog **cur_catalog, vector<ind> *vec) {
+	bool isMoved = false;
 	bool isMovable = false;
 	for (int i = 0; i < (**cur_catalog).files.size(); i++) {
 		if ((**cur_catalog).files[i].name == cur_name) {
@@ -258,6 +258,11 @@ void MOVE(vector<catalog*> path, string cur_name, string new_name, catalog **cur
 				}
 			}
 			if (!isMovable) {
+				for (int i = 0; i < (*vec).size(); i++) {
+					if ((*vec)[i].file_name == cur_name) {
+						(*vec)[i].file_name = new_name;
+					}
+				}
 				(**cur_catalog).files[i].name = new_name;
 			}
 		}
@@ -393,15 +398,35 @@ void main() {
 			cin >> filename;
 			cin >> type;
 			type = type.substr(1, type.size());
-			(*curr_catalog).files.push_back(CREATE_FILE(filename, type));
-			ind temp;
-			temp.file_name = filename;
-			index_vector.push_back(temp);
+			bool isCreate = false;
+			for (int i = 0; i < (*curr_catalog).files.size(); i++) {
+				if ((*curr_catalog).files[i].name == filename) {
+					cout << "This file already exists"<< endl;
+					isCreate = true;
+				}
+			}
+			if (!isCreate) {
+				(*curr_catalog).files.push_back(CREATE_FILE(filename, type));
+				ind temp;
+				temp.file_name = filename;
+				index_vector.push_back(temp);
+			}
+			
 
 		}
 		else if (req == "md") {
 			cin >> filename;
-			(*curr_catalog).catalogs.push_back(MD(filename));
+			bool isCreate = false;
+			for (int i = 0; i < (*curr_catalog).catalogs.size(); i++) {
+				if ((*curr_catalog).catalogs[i].name == filename) {
+					cout << "This directory already exists"<<endl;
+					isCreate = true;
+				}
+			}
+			if (!isCreate) {
+				(*curr_catalog).catalogs.push_back(MD(filename));
+			}
+			
 		}
 
 		else if (req == "dir") {
@@ -417,14 +442,17 @@ void main() {
 		}
 		else if (req == "cd") {
 			cin >> filename;
+			bool isFind = false;
 			for (int i = 0; i < (*curr_catalog).catalogs.size(); i++) {
 				if ((*curr_catalog).catalogs[i].name == filename) {
 					curr_catalog = &(*curr_catalog).catalogs[i];
 					path.push_back(curr_catalog);
+					isFind = true;
 				}
-				else {
-					cout << "Directory is not found" << endl;
-				}
+				
+			}
+			if (!isFind) {
+				cout << "Directory is not found!" << endl;
 			}
 		}
 		else if (req == "cd..") {
@@ -441,7 +469,7 @@ void main() {
 			string new_catalog;
 			cin >> filename;
 			cin >> new_catalog;
-			MOVE(path, filename, new_catalog, &curr_catalog);
+			MOVE(path, filename, new_catalog, &curr_catalog, &index_vector);
 		}
 		else if (req == "read")
 		{
@@ -469,7 +497,7 @@ void main() {
 			string name;
 			cin >> name;
 			name = name + ".bin";
-			ofstream ofs(name, ios::binary | std::ios::out); //std::ios::app);
+			ofstream ofs(name, ios::binary | std::ios::out); 
 			size = block.size();
 			ofs.write((char *)&size, sizeof(block.size()));
 			for (int i = 0; i < block.size(); i++) {
@@ -525,7 +553,7 @@ void main() {
 			cout << "md     create directory" << endl;
 			cout << "cf     create file" << endl;
 			cout << "cd     change directory" << endl;
-			cout << "back   come back to parent directory" << endl;
+			cout << "cd..   come back to parent directory" << endl;
 			cout << "del    delete file" << endl;
 			cout << "rmdir  delete directory" << endl;
 			cout << "copy   copy file or directory" << endl;
@@ -533,7 +561,7 @@ void main() {
 			cout << "write  write data to file" << endl;
 			cout << "read   read data from file" << endl;
 			cout << "save   save file system" << endl;
-			cout << "dump   download file system" << endl;
+			cout << "load   download file system" << endl;
 			cout << endl;
 		}
 
