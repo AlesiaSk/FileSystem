@@ -55,11 +55,6 @@ void DEL(catalog **dir, string filename, vector<ind> *vec) {
 					(*vec).erase((*vec).begin() + l);
 				}
 			}
-			/*for (int l = 0; l < (*vec).size(); l++) {
-				if ((*vec)[l].file_name == filename) {
-					(*vec).erase((*vec).begin() + l);
-				}
-			}*/
 			(**dir).files.erase((**dir).files.begin() + i);
 		}
 	}
@@ -249,7 +244,6 @@ void MOVE(vector<catalog*> path, string cur_name, string new_name, catalog **cur
 			for (int j = 0; j < path.size(); j++) {
 				if ((*path[j]).name == new_name) {
 					(*path[j]).files.push_back((**cur_catalog).files[i]);
-				//	DEL(cur_catalog, (**cur_catalog).files[i].name);
 					(**cur_catalog).files.erase((**cur_catalog).files.begin() + i);
 					isMovable = true;
 				}
@@ -257,7 +251,6 @@ void MOVE(vector<catalog*> path, string cur_name, string new_name, catalog **cur
 					for (int y = 0; y < (*path[j]).catalogs.size(); y++) {
 						if ((*path[j]).catalogs[y].name == new_name) {
 							(*path[j]).catalogs[y].files.push_back((**cur_catalog).files[i]);
-						//	DEL(cur_catalog, (**cur_catalog).files[i].name);
 							(**cur_catalog).files.erase((**cur_catalog).files.begin() + i);
 							isMovable = true;
 						}
@@ -299,6 +292,72 @@ void MOVE(vector<catalog*> path, string cur_name, string new_name, catalog **cur
 	
 }
 
+void save(catalog root,ofstream &ofs) {
+	int size;
+	size = root.catalogs.size();
+		if (!root.isVisited) {
+
+			ofs.write((char *)&size, sizeof(root.catalogs.size()));
+			if (size > 0) {
+				for (int i = 0; i < root.catalogs.size(); i++) {
+					ofs.write((char *)&root.catalogs[i].name, sizeof(root.catalogs[i].name));
+				}
+				for (int i = 0; i < root.catalogs.size(); i++) {
+					if (!root.catalogs[i].isVisited) {
+						save(root.catalogs[i], ofs);
+					}
+				}
+				root.isVisited = true;
+			}
+			else {
+				size = root.files.size();
+				ofs.write((char *)&size, sizeof(root.files.size()));
+				for (int i = 0; i < root.files.size(); i++) {
+					ofs.write((char *)&root.files[i].name, sizeof(root.files[i].name));
+					ofs.write((char *)&root.files[i].type, sizeof(root.files[i].type));
+				}
+
+				root.isVisited = true;
+				return;
+			}
+			
+
+			
+		}
+}
+
+void load(catalog *root, ifstream &ifs) {
+	int size;
+	file temp;
+	string name;
+	ifs.read((char *)&size, sizeof(size));
+	if (!(*root).isVisited) {
+		if (size > 0) {
+			for (int i = 0; i < size; i++) {
+				ifs.read((char *)&name, sizeof(name));
+				(*root).catalogs.push_back(MD(name));
+			}
+			for (int i = 0; i < size; i++) {
+				if (!(*root).catalogs[i].isVisited) {
+					load(&(*root).catalogs[i], ifs);
+				}
+			}
+			(*root).isVisited = true;
+		}
+
+		else {
+			ifs.read((char *)&size, sizeof(size));
+			for (int i = 0; i < size; i++) {
+				ifs.read((char *)&temp.name, sizeof(temp.name));
+				ifs.read((char *)&temp.type, sizeof(temp.type));
+				(*root).files.push_back(temp);
+			}
+			(*root).isVisited = true;
+			return;
+		}
+
+	}
+}
 
 void main() { 
 	string cases;
@@ -368,7 +427,7 @@ void main() {
 				}
 			}
 		}
-		else if (req == "cd--") {
+		else if (req == "cd..") {
 			if ((*curr_catalog).name != root.name) {
 				curr_catalog = path[path.size() - 2];
 				path.erase(path.begin() + (path.size() - 1));
@@ -410,12 +469,13 @@ void main() {
 			string name;
 			cin >> name;
 			name = name + ".bin";
-			ofstream ofs(name, ios::binary);
+			ofstream ofs(name, ios::binary | std::ios::out); //std::ios::app);
 			size = block.size();
 			ofs.write((char *)&size, sizeof(block.size()));
 			for (int i = 0; i < block.size(); i++) {
 				ofs.write((char *)&block[i], sizeof(block[i]));
 			}
+			size = 0;
 			size = index_vector.size();
 			ofs.write((char *)&size, sizeof(index_vector.size()));
 			for (int i = 0; i < index_vector.size(); i++) {
@@ -426,21 +486,8 @@ void main() {
 					ofs.write((char *)&index_vector[i].index[j], sizeof(index_vector[i].index[j]));
 				}
 			}
-			size = root.catalogs.size();
 			ofs.write((char *)&root.name, sizeof(root.name));
-			ofs.write((char *)&size, sizeof(root.catalogs.size()));
-			for (int i = 0; i < root.catalogs.size(); i++) {
-				ofs.write((char *)&root.catalogs[i].name, sizeof(root.catalogs[i].name));
-			}
-			size = root.files.size();
-			ofs.write((char *)&size, sizeof(root.files.size()));
-			for (int i = 0; i < root.files.size(); i++) {
-				ofs.write((char *)&root.files[i].name, sizeof(root.files[i].name));
-				ofs.write((char *)&root.files[i].type, sizeof(root.files[i].type));
-
-			}
-			
-
+			save(root, ofs);
 			
 		}
 
@@ -450,8 +497,8 @@ void main() {
 			file temp;
 			string name;
 			cin >> name;
-			name = name + ".bin";
-			ifstream ifs(name, ios::binary);
+			filename = name + ".bin";
+			ifstream ifs(filename, ios::binary);
 			ifs.read((char *)&size, sizeof(size));
 			for (int i = 0; i < size; i++) {
 				ifs.read((char *)&block[i], sizeof(block[i]));
@@ -459,7 +506,6 @@ void main() {
 			ifs.read((char *)&size, sizeof(size));
 			for (int i = 0; i < size; i++) {
 				ind temp;
-
 				ifs.read((char *)&temp.file_name, sizeof(temp.file_name));
 				ifs.read((char *)&temp_size, sizeof(temp_size));
 				int val;
@@ -471,26 +517,7 @@ void main() {
 			}
 			
 			ifs.read((char *)&root.name, sizeof(root.name));
-			ifs.read((char *)&size, sizeof(size));
-
-			for (int i = 0; i < size; i++) {
-				ifs.read((char *)&name, sizeof(name));
-				root.catalogs.push_back(MD(name));
-			}
-			ifs.read((char *)&size, sizeof(size)); 
-			for (int i = 0; i < size; i++) {
-				ifs.read((char *)&name, sizeof(name));
-				temp.name = name;
-				ifs.read((char *)&temp.type, sizeof(temp.type));
-				int temp_size;
-				ifs.read((char *)&temp_size, sizeof(temp_size));
-				int ind;
-				for (int j = 0; j < temp_size; j++) {
-					ifs.read((char *)&ind, sizeof(ind));
-					//temp.index.push_back(ind);
-				}
-				root.files.push_back(temp);
-			}
+			load(&root, ifs);
 
 		}
 
@@ -508,6 +535,10 @@ void main() {
 			cout << "save   save file system" << endl;
 			cout << "dump   download file system" << endl;
 			cout << endl;
+		}
+
+		else {
+			cout << "Wrong command!" << endl;
 		}
 	}
 
